@@ -114,7 +114,7 @@ export default function Home() {
             </Head>
 
             <div className=" mx-auto">
-                <Navbar />
+            <Navbar />
 
             {/* Hero section will now start from the top */}
             <HeroSection post={featuredPost} />
@@ -130,7 +130,7 @@ export default function Home() {
 
                 <div className="flex justify-end mb-12">
                     <button className="px-4 py-2 bg-gray-200 rounded-full">
-                        Top
+                        Go Top
                     </button>
                 </div>
             </main>
