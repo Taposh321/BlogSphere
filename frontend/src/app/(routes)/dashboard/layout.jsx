@@ -7,7 +7,6 @@ import Link from "next/link";
 const tabs=[
     {key:"users",label:"Users",href:"/dashboard/users"},
     {key:"posts",label:"Posts",href:"/dashboard/posts"},
-    {key:"comments",label:"Comments",href:"/dashboard/comments"}
   ]
 
 export default function Layout({ children }) {

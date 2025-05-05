@@ -12,41 +12,41 @@ export default function User() {
   const params = useParams();
   const { token } = useAuth(); // Get token from context
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/users/${params.id}`,
-  //         {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         }
-  //       );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/${params.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-  //       if (!res.ok){
-  //           if(res.status=="404") throw new Error("Data not Found")
-  //             else if( res.status=="400") throw new Error("Bad request")
-  //              else if(res.status=="401") throw new Error("Unauthorized request")
-  //               else if(res.status=="500") throw new Error("Internal server error")
-  //                else{
-  //               throw new Error("Failed to fecth data")
-  //             }
-  //       }
+        if (!res.ok){
+            if(res.status=="404") throw new Error("Data not Found")
+              else if( res.status=="400") throw new Error("Bad request")
+               else if(res.status=="401") throw new Error("Unauthorized request")
+                else if(res.status=="500") throw new Error("Internal server error")
+                 else{
+                throw new Error("Failed to fecth data")
+              }
+        }
 
-  //       const data = await res.json();
-  //       setUser(data); 
-  //     } catch (err) {
-  //       setErr(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   if (params.id) fetchData();
-  // }, [params.id, token]);
+        const data = await res.json();
+        setUser(data); 
+      } catch (err) {
+        setErr(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (params.id) fetchData();
+  }, [params.id, token]);
 
-  // if (loading) return <div className="w-full h-screen flex justify-center items-center">
-  //   <BeatLoader color="gray" size="10px" />
-  // </div>
+  if (loading) return <div className="w-full h-screen flex justify-center items-center">
+    <BeatLoader color="gray" size="10px" />
+  </div>
 
   if (err) return <div className="text-xl font-bold text-gray-600 w-full h-screen flex justify-center items-center">{err.message}</div>;
   //prevent ui from rendering if user is null for ui improvemnt

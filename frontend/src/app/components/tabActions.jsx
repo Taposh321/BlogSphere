@@ -20,7 +20,8 @@ const mocPostData =[
     comments:"100",
     shares:"100k",
     published:"Jan 1, 2025",
-    updated:"Feb 2, 2025"
+    updated:"Feb 2, 2025",  
+    status:"Published"
   },
   {
     id:"0925615",
@@ -29,7 +30,8 @@ const mocPostData =[
     comments:"10k",
     shares:"100k",
     published:"Jan 1, 2025",
-    updated:"Feb 2, 2025"
+    updated:"Feb 2, 2025",
+    status:"Published"
   },
   {
     id:"09258768",
@@ -38,7 +40,9 @@ const mocPostData =[
     comments:"100k",
     shares:"20k",
     published:"Jan 1, 2025",
-    updated:"Feb 2, 2025"
+    updated:"Feb 2, 2025",
+    status:"Published"
+
   }
 ]
   
@@ -94,7 +98,7 @@ return(<>
           }
             
         </div>
-        <div className="w-full flex-1 h-full mx-3  flex justify-center items-center  ">
+        <div className="w-full flex-1 h-full  ">
            {
             loading &&<div className="w-full h-full flex justify-center items-center text-red-500 font-bold "> <BeatLoader  color="gray" size="10px"/>  </div>
            }
@@ -103,7 +107,6 @@ return(<>
            }
            
             <div className="p-3"> {content()}</div> :
-            <div className="w-full h-full flex justify-center items-center text-sm font-bold">Empty</div>
            
         </div>
 
@@ -114,6 +117,8 @@ return(<>
 
 
 const AllPosts =({data})=>{
+
+  //fetch all post of a user
   return(<>
     <div>
     <table className="w-full table-auto text-sm mt-4">
@@ -125,12 +130,14 @@ const AllPosts =({data})=>{
               <th className="border-b p-3 text-left">Likes</th>
               <th className="border-b p-3 text-left">Comments</th>
               <th className="border-b p-3 text-left">Updated </th>
+              <th className="border-b p-3 text-left">Status </th>
+
               <th className="border-b p-3 text-center">Actions </th>
             </tr>
           </thead>
           <tbody className="w-full ">
-            {data?.map((post) => (
-              <tr key={post._id} className="hover:bg-gray-50">
+            {data?.map((post,i) => (
+              <tr key={i} className="hover:bg-gray-50">
                 <td className="border-b p-3">{post?._id || "N/A"}</td>
                 <td className="border-b p-3">{post?.title || "N/A"}</td>
 
@@ -150,18 +157,20 @@ const AllPosts =({data})=>{
                     day: "numeric",
                   }) 
                   }</td>
+               <td className="border-b p-3">{post?.status || "N/A"}</td>
 
-                <td className=" bg-red-500">
-                  <di className="flex gap-2 items-center">
-                  <div className=" text-sm rounded-md bg-red-400 text-white">Delete</div>
-                  <div className=" text-sm rounded-md text-red-black">Suspend</div>
+
+                <td className="border-b">
+                  <div className="flex gap-2 items-center w-full">
+                  <div className=" text-sm px-3 rounded-md bg-red-400 text-white">Delete</div>
+                  <div className=" text-sm px-3 rounded-md text-red-black">Suspend</div>
                   <Link
                     href={`/dashboard/posts/${post?.id}`}
                     className="text-sm cursor-pointer text-[#00B087] bg-[#16C098]/50 px-3 rounded text-center border border-[#16C098]"
                   >
                     View post
                   </Link>
-                  </di>
+                  </div>
                  
 
                 </td>
@@ -177,6 +186,7 @@ const AllPosts =({data})=>{
 }
 
 const PendingPosts =({data})=>{
+  //Fetch all pending post
   return(<>
     <div>
     List of all pending posts

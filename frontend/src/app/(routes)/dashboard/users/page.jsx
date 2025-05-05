@@ -4,72 +4,92 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 
 export default async function UserManagement({ searchParams }) {
-//   const search = await searchParams ;
-//   const currentPage = await search.page;
+  const params = await searchParams ;
+  const currentPage = params?.page || 1;
+  const cookieStore =await cookies();
+  const token =  cookieStore.get("accessToken")?.value;
   
-//   const cookieStore =await cookies();
-//   const token = await cookieStore.get("accessToken")?.value;
+let res= null;
+  if(params.tab=="allUsers"){
+     res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users`,
+       { cache: "no-store",
+        headers: { Authorization: `Bearer ${token}` },
+       },
+    );
   
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_API_URL}/users?search=${search}`,
-//      { cache: "no-store",
-//       headers: { Authorization: `Bearer ${token}` },
-//      },
-//   );
+  }else if(params.tab=="suspendUsers"){
+    res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/suspend/users`,
+       { cache: "no-store",
+        headers: { Authorization: `Bearer ${token}` },
+       },
+    );
 
-//   if (!res.ok){
-//     if(res.status=="404") throw new Error("Data not Found")
-//       else if( res.status=="400") throw new Error("Bad request")
-//        else if(res.status=="401") throw new Error("Unauthorized request")
-//         else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
-//          else{
-//         throw new Error("Failed to fecth data")
-//       }
-// }
+  }else{
+    //fallback to all users  tab
+    res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users`,
+       { cache: "no-store",
+        headers: { Authorization: `Bearer ${token}` },
+       },
+    );
+  }
+ 
+  if (!res.ok){
+    if(res.status=="404") throw new Error("Data not Found")
+      else if( res.status=="400") throw new Error("Bad request")
+       else if(res.status=="401") throw new Error("Unauthorized request")
+        else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
+         else{
+        throw new Error("Failed to fecth data")
+      }
+}
   
 
-//   const data = await res.json();
+  const data = await res.json();
 
-//   const users = Array.isArray(data.data) ? data.data : [data.data];
-//   const pageSize = 10;
-//   const totalCount = users.length;
-//   const start = (currentPage - 1) * pageSize + 1;
-//   const end = Math.min(start + pageSize - 1, totalCount);
+  const users = Array.isArray(data.data) ? data.data : [data.data];
+  const pageSize = 10;
+  const totalCount = users.length;
+  const start = (currentPage - 1) * pageSize + 1;
+  const end = Math.min(start + pageSize - 1, totalCount);
 
-//   const paginatedItems = users.slice(start - 1, end);
+  const paginatedItems = users.slice(start - 1, end);
 
   return (
     <div className="flex w-full min-h-full flex-col p-5">
       {/* Summary Cards */}
-      {/* <div className="w-full flex gap-4 py-5">
-        <SummaryCard label="All members" value={users.length} />
-        <SummaryCard label="New members" value="1k" />
-        <SummaryCard label="Suspend users" value="900" />
-      </div> */}
+    <div className="w-full flex gap-4 py-5">
+      <Link href={`/dashboard/users?tab=allUsers`} >  <SummaryCard label="All users" value={users?.length} /></Link>
+      <Link href={`/dashboard/users?tab=suspendUsers`} >  <SummaryCard label="Suspend users" value="900" /></Link>
+      </div>
+
 
       {/* Table Section */}
       <div className="p-5 w-full min-w-[18rem] overflow-x-auto bg-white  rounded-2xl shadow-lg">
         <div className="flex gap-3 items-center mb-4">
-          <h1 className="text-md font-bold">All members</h1>
+          <h1 className="text-md font-bold">{params.tab=="allUsers"? <>All users</>:<>All suspend users</>}</h1>
           <DashBoardSearch api="/dashboard/users" placeholder="Search by username" />
           <div className="text-gray-500 text-sm ">
-            {/* Showing items: {start} - {end} */}
+            Showing items: {start} - {end}
           </div>
         </div>
 
         <table className="w-full table-auto text-sm mt-4">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
-              <th className="border-b p-3 text-left">Customer Name</th>
+              <th className="border-b p-3 text-left">User Name</th>
               <th className="border-b p-3 text-left">Join Date</th>
               <th className="border-b p-3 text-left">Contact</th>
               <th className="border-b p-3 text-left">Email</th>
               <th className="border-b p-3 text-left">Country</th>
+              <th className="border-b p-3 text-left">Status</th>
               <th className="border-b p-3 text-left">Action</th>
             </tr>
           </thead>
           <tbody>
-            {/* {paginatedItems.map((user) => (
+            {paginatedItems.map((user) => (
               <tr key={user._id} className="hover:bg-gray-50">
                 <td className="border-b p-3">{user.name || "N/A"}</td>
                 <td className="border-b p-3">
@@ -81,6 +101,8 @@ export default async function UserManagement({ searchParams }) {
                 </td>
                 <td className="border-b p-3">{user.phone || "N/A"}</td>
                 <td className="border-b p-3">{user.email || "N/A"}</td>
+                <td className="border-b p-3">{user.status || "N/A"}</td>
+
                 <td className="border-b p-3">{user.country || "N/A"}</td>
                 <td className="border-b p-3">
                   <Link
@@ -91,16 +113,16 @@ export default async function UserManagement({ searchParams }) {
                   </Link>
                 </td>
               </tr>
-            ))} */}
+            ))}
           </tbody>
         </table>
 
         {/* Pagination */}
         <div className="w-full mt-4">
           <ClientWrapper
-            currentPage={1}
-            pageSize={1}
-            totalCount={10}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalCount={totalCount}
             api="/dashboard/users"
           />
         </div>
@@ -108,6 +130,7 @@ export default async function UserManagement({ searchParams }) {
     </div>
   );
 }
+
 
 function SummaryCard({ label, value }) {
   return (

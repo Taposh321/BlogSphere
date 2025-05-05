@@ -7,13 +7,13 @@ import { cookies } from "next/headers";
 
 //Server component
 export default async function Posts({ searchParams }) {
-  const params =await searchParams;
+  const {search,deleted} =await searchParams;
   
   const cookieStore =await cookies();
-  const token =await cookieStore.get("accessToken")?.value;
+  const token = cookieStore.get("accessToken")?.value;
     
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/posts?search=${params.search}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/posts`,
     { cache: "no-store",
       headers:{Authorization:`Bearer ${token}`}
      }
@@ -32,7 +32,7 @@ export default async function Posts({ searchParams }) {
   const data = await res.json();
   //Pagination logic
   const posts = Array.isArray(data.data.posts) ? data.data.posts : [];
-  const currentPage = Number(params?.page || 1);
+  const currentPage = Number(search || 1);
   const pageSize = 10;
   const totalCount = posts.length;
   const start = (currentPage - 1) * pageSize + 1;
@@ -50,6 +50,7 @@ export default async function Posts({ searchParams }) {
       </div>
 
       {/* Table Section */}
+      <div>{deleted&& <div className="p-2 text-green-400">Post had been deleted successfully</div>}</div>
       <div className="px-5 min-w-[20rem] overflow-x-auto bg-white mx-5 rounded-2xl">
         <div className="flex gap-3 items-center mb-4">
           <h1 className="text-md font-bold">All Posts</h1>
