@@ -18,7 +18,7 @@ export default function FilterBar({
     const [selectedSort, setSelectedSort] = useState(sortBy);
 
     return (
-        <div className="mb-8">
+        <div className="mb-8  dark:text-white">
             <h2 className="text-2xl font-bold mb-4">Popular blogs</h2>
 
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -37,7 +37,7 @@ export default function FilterBar({
                     <select
                         value={selectedSort}
                         onChange={(e) => setSelectedSort(e.target.value)}
-                        className="bg-transparent font-medium cursor-pointer"
+                        className=" bg-white text-black font-medium cursor-pointer"
                     >
                         {sortOptions.map((option) => (
                             <option key={option} value={option}>

@@ -7,13 +7,13 @@ import { cookies } from "next/headers";
 
 //Server component
 export default async function Posts({ searchParams }) {
-  const search = searchParams?.search || "";
+  const params =await searchParams;
   
-  const cookieStore = cookies();
-  const token = cookieStore.get("accessToken")?.value;
+  const cookieStore =await cookies();
+  const token =await cookieStore.get("accessToken")?.value;
     
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/posts?search=${search}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/posts?search=${params.search}`,
     { cache: "no-store",
       headers:{Authorization:`Bearer ${token}`}
      }
@@ -32,7 +32,7 @@ export default async function Posts({ searchParams }) {
   const data = await res.json();
   //Pagination logic
   const posts = Array.isArray(data.data.posts) ? data.data.posts : [];
-  const currentPage = Number(searchParams?.page || 1);
+  const currentPage = Number(params?.page || 1);
   const pageSize = 10;
   const totalCount = posts.length;
   const start = (currentPage - 1) * pageSize + 1;

@@ -1,6 +1,7 @@
 "use client";
 
 import { API_URL } from "@/server.js";
+
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +37,7 @@ const Signup = () => {
       setServerError(null);
       setLoading(true);
 
-      const res = await axios.post(`${API_URL}/auth/signup`, data, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, data, {
         withCredentials: true,
       });
 
@@ -45,6 +46,7 @@ const Signup = () => {
       setCanResend(false);
       setTimer(60);
 
+      
       toast.success("Signup successful! Enter the OTP sent to your email.");
     } catch (err) {
       const errorMessage =

@@ -4,48 +4,48 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 
 export default async function UserManagement({ searchParams }) {
-  const search = await searchParams ;
-  const currentPage = await search.page;
+//   const search = await searchParams ;
+//   const currentPage = await search.page;
   
-  const cookieStore =await cookies();
-  const token = await cookieStore.get("accessToken")?.value;
+//   const cookieStore =await cookies();
+//   const token = await cookieStore.get("accessToken")?.value;
   
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/users?search=${search}`,
-     { cache: "no-store",
-      headers: { Authorization: `Bearer ${token}` },
-     },
-  );
+//   const res = await fetch(
+//     `${process.env.NEXT_PUBLIC_API_URL}/users?search=${search}`,
+//      { cache: "no-store",
+//       headers: { Authorization: `Bearer ${token}` },
+//      },
+//   );
 
-  if (!res.ok){
-    if(res.status=="404") throw new Error("Data not Found")
-      else if( res.status=="400") throw new Error("Bad request")
-       else if(res.status=="401") throw new Error("Unauthorized request")
-        else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
-         else{
-        throw new Error("Failed to fecth data")
-      }
-}
+//   if (!res.ok){
+//     if(res.status=="404") throw new Error("Data not Found")
+//       else if( res.status=="400") throw new Error("Bad request")
+//        else if(res.status=="401") throw new Error("Unauthorized request")
+//         else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
+//          else{
+//         throw new Error("Failed to fecth data")
+//       }
+// }
   
 
-  const data = await res.json();
+//   const data = await res.json();
 
-  const users = Array.isArray(data.data) ? data.data : [data.data];
-  const pageSize = 10;
-  const totalCount = users.length;
-  const start = (currentPage - 1) * pageSize + 1;
-  const end = Math.min(start + pageSize - 1, totalCount);
+//   const users = Array.isArray(data.data) ? data.data : [data.data];
+//   const pageSize = 10;
+//   const totalCount = users.length;
+//   const start = (currentPage - 1) * pageSize + 1;
+//   const end = Math.min(start + pageSize - 1, totalCount);
 
-  const paginatedItems = users.slice(start - 1, end);
+//   const paginatedItems = users.slice(start - 1, end);
 
   return (
     <div className="flex w-full min-h-full flex-col p-5">
       {/* Summary Cards */}
-      <div className="w-full flex gap-4 py-5">
+      {/* <div className="w-full flex gap-4 py-5">
         <SummaryCard label="All members" value={users.length} />
         <SummaryCard label="New members" value="1k" />
         <SummaryCard label="Suspend users" value="900" />
-      </div>
+      </div> */}
 
       {/* Table Section */}
       <div className="p-5 w-full min-w-[18rem] overflow-x-auto bg-white  rounded-2xl shadow-lg">
@@ -53,7 +53,7 @@ export default async function UserManagement({ searchParams }) {
           <h1 className="text-md font-bold">All members</h1>
           <DashBoardSearch api="/dashboard/users" placeholder="Search by username" />
           <div className="text-gray-500 text-sm ">
-            Showing items: {start} - {end}
+            {/* Showing items: {start} - {end} */}
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export default async function UserManagement({ searchParams }) {
             </tr>
           </thead>
           <tbody>
-            {paginatedItems.map((user) => (
+            {/* {paginatedItems.map((user) => (
               <tr key={user._id} className="hover:bg-gray-50">
                 <td className="border-b p-3">{user.name || "N/A"}</td>
                 <td className="border-b p-3">
@@ -91,16 +91,16 @@ export default async function UserManagement({ searchParams }) {
                   </Link>
                 </td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
         </table>
 
         {/* Pagination */}
         <div className="w-full mt-4">
           <ClientWrapper
-            currentPage={currentPage}
-            pageSize={pageSize}
-            totalCount={totalCount}
+            currentPage={1}
+            pageSize={1}
+            totalCount={10}
             api="/dashboard/users"
           />
         </div>

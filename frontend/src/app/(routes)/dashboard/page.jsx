@@ -294,7 +294,7 @@ import { useEffect } from "react";
 export default function DefaultTab(){
   const router =useRouter();
    useEffect(()=>{
-             router.push("dashboard/users")
+             router.push("/dashboard/users")
 },[])
 return null
 }

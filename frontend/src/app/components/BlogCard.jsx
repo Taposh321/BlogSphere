@@ -13,7 +13,7 @@ export default function BlogCard({
     slug,
 }) {
     return (
-        <div className="rounded-lg overflow-hidden shadow-md">
+        <div className="rounded-lg overflow-hidden shadow-md gap-5 p-3 ">
             <div className="relative">
                 <Image
                     src={image || "/placeholder.jpg"}
@@ -29,7 +29,7 @@ export default function BlogCard({
                 </div>
             </div>
 
-            <div className="p-4">
+            <div className=" dark:text-white  text-black">
                 <h3 className="font-bold text-lg mb-2">
                     <Link
                         href={`/blog/${slug}`}
@@ -39,7 +39,7 @@ export default function BlogCard({
                     </Link>
                 </h3>
                 {excerpt && (
-                    <p className="text-gray-600 text-sm mb-4">{excerpt}</p>
+                    <p className="text-gray-600 dark:text-white text-sm mb-4">{excerpt}</p>
                 )}
 
                 <div className="flex items-center justify-between">
@@ -56,7 +56,7 @@ export default function BlogCard({
                         <span className="text-xs">{author}</span>
                     </div>
                     {date && readTime && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs dark:text-white text-gray-500">
                             {date} · {readTime}
                         </div>
                     )}

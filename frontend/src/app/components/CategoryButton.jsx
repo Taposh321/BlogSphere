@@ -4,7 +4,7 @@ export default function CategoryButton({ category, active = false }) {
     return (
         <Link
             href={`/category/${category.toLowerCase()}`}
-            className={`px-4 py-1 rounded-full text-sm ${
+            className={`px-4   py-1 rounded-full text-sm ${
                 active ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
             }`}
         >

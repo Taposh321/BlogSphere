@@ -103,7 +103,7 @@ export default function Home() {
             : blogs.filter((blog) => blog.category === activeCategory);
 
     return (
-        <div className="min-h-screen bg-white transition-colors dark:bg-black">
+        <div className="min-h-screen bg-white transition-colors dark:bg-[#131212]">
             <Head>
                 <title>BlogSphere - Your Personal Blog Space</title>
                 <meta
@@ -113,10 +113,8 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            {/* Position navbar absolutely so it overlays the hero section */}
-            <header className="absolute  top-0 left-0 right-0 z-50">
+            <div className=" mx-auto">
                 <Navbar />
-            </header>
 
             {/* Hero section will now start from the top */}
             <HeroSection post={featuredPost} />
@@ -136,6 +134,10 @@ export default function Home() {
                     </button>
                 </div>
             </main>
+                
+            </div>
+            {/* Position navbar absolutely so it overlays the hero section */}
+          
         </div>
     );
 }

@@ -9,31 +9,41 @@ export default function Navbar() {
     const [model ,setModel] =useState(false)
     const {user,token,login,logout} = useAuth();
     const [dark,setDark] = useState(false)
-   
+    useEffect(() => {
+      const isDark = localStorage.getItem("Dark");
+      if (isDark === "true") {
+        setDark(true);
+        document.body.classList.add("dark");
+      } else {
+        setDark(false);
+        document.body.classList.remove("dark");
+      }
+    }, []);
+    
     const modelHandler =()=>{
     setModel(true)
     }
-     const toggleTheme =()=>{
-          if(dark==false) {
-            document.body.classList.add("dark")
-            setDark(true)
-          }
-          else{
-            document.body.classList.remove("dark")
-            setDark(false)
-          }
-       }
+
+      const toggleTheme = () => {
+        const nextTheme = !dark;
+        setDark(nextTheme);
+        localStorage.setItem("Dark", nextTheme ? "true" : "false");
+        document.body.classList.toggle("dark", nextTheme);
+      };
+      
+       
     
     return (
-        <nav className="flex items-center sticky top-0 justify-between px-[25px] pt-5
-        inset-0 bg-gradient-to-b from-black  to-transparent
+        <nav className="flex items-center sticky top-0 z-50  h-full justify-between  py-5
+      shadow-xl bg-white dark:bg-[#1C1B1B]
         
         ">
-            <Link href="/" className="text-lg font-bold text-blue-500">
+          <div className="max-w-[1200px]  px-3   w-full mx-auto flex">
+          <Link href="/" className="text-lg font-bold text-blue-500">
                 BlogSphere
             </Link>
 
-            <div className="relative mx-4 flex-grow max-w-[20rem]">
+            <div className="relative mx-4 flex-1 max-w-[20rem]">
                 
                 <input
                     type="text"
@@ -46,16 +56,19 @@ export default function Navbar() {
             </div>
 
 
-            <div className=" flex justify-end items-center gap-5">
+            <div className=" flex justify-end items-center ml-auto gap-5">
            
-           <div className="w-[100px] relative  flex justify-center items-center border  dark:bg-white">
-           <button className="p-1 absolute">
-                    <Moon className="h-5 w-5 " color="white"  onClick={()=> toggleTheme()}/>
+           <div className="w-[50px]  h-[23px]  overflow-hidden rounded-4xl shadow-inner-dark   relative  flex justify-center items-center  bg-gray-300 dark:bg-white">
+           <div className={`absolute  flex items-center   w-full h-full transition-all  ${dark?"translate-x-[20px] ":"left-0 inline"}`}>
+           <button className=" absolute left-1 top-[2.5px]">
+                    <Moon className="h-5 w-5 dark:hidden " color="white"  onClick={()=> toggleTheme()}/>
              </button>
-             <button className="p-1 absolute">
-                    <Sun className="h-5 w-5 " color="white"  onClick={()=> toggleTheme()}/>
+             <button className=" absolute dark:inline hidden left-0 top-[2px]">
+                  <Sun className="h-5 w-5 " color="gray"  onClick={()=> toggleTheme()}/>
              </button>
 
+           </div>
+          
            </div>
          
            
@@ -88,10 +101,10 @@ export default function Navbar() {
                         <>
                          <Link href="/login" className="text-sm  bg-blue-500 text-white text-center px-3  rounded-sm">
                        Sign in
-                </Link>
-                         <Link href="/signup" className="text-sm  ext-center px-3 text-black md:text-white  rounded-sm">
+                     </Link>
+                         <Link href="/signup" className="text-sm  text-center px-3 text-black dark:text-white    rounded-sm">
                        Sign up
-                </Link>
+                      </Link>
                         </>
                        
                 
@@ -103,6 +116,8 @@ export default function Navbar() {
                 
             </div>
             </div>
+          </div>
+          
 
         </nav>
     );

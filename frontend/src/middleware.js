@@ -5,27 +5,27 @@ import { jwtVerify } from 'jose'
 export async function middleware(request) {
   const url = await request.nextUrl
 
-  if(url.pathname.includes("/dashboard")){
-    const token = request.cookies.get("accessToken")?.value;
-    if(!token ){
-      // when no token redirect to home page
-      return NextResponse.redirect(new URL("/",request.url))
-    }
+  // if(url.pathname.includes("/dashboard")){
+  //   const token = request.cookies.get("accessToken")?.value;
+  //   if(!token ){
+  //     // when no token redirect to home page
+  //     // return NextResponse.redirect(new URL("/",request.url))
+  //   }
 
 
-    // If we get token then varify it
-    try{
-      const secret = new TextEncoder.encode(process.env.JWT_SECRET)
-      const {payload} =await jwtVerify(token,secret);
+  //   // If we get token then varify it
+  //   try{
+  //     const secret = new TextEncoder.encode(process.env.JWT_SECRET)
+  //     const {payload} =await jwtVerify(token,secret);
 
-      if(payload.role !=="admin") return  NextResponse.redirect(new URL("/",request.url));
-       return  NextResponse.next()
-    }catch(err){
-       throw new Error("Authentication failed")
-    }
+  //     // if(payload.role !=="admin") return  NextResponse.redirect(new URL("/",request.url));
+  //      return  NextResponse.next()
+  //   }catch(err){
+  //      throw new Error("Authentication failed")
+  //   }
 
-  }
-  return NextResponse.redirect(new URL('/', request.url))
+  // }
+  // return NextResponse.redirect(new URL('/', request.url))
 
 
 

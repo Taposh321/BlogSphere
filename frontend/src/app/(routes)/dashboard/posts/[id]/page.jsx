@@ -4,13 +4,15 @@ import { format } from 'date-fns';
 import Image from 'next/image';
 import { cookies } from 'next/headers';
 const BlogPostPage = async ({ params }) => {
-  const cookieStore = cookies();
-  const token =cookieStore.get("accessToken")?.value;
-  const id = params?.id || "";
+  const cookieStore =await cookies();
+  const token =await cookieStore.get("accessToken")?.value;
+  const {id} =await params;
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`,
-    { cache: "no-store" }
+    { cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` }
+     }
   );
   
   if (!res.ok){
