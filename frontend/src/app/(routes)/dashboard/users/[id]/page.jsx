@@ -98,7 +98,7 @@ export default function User() {
 
           ]
         }
-    itemInfo={user?.data}
+    userInfo={user?.data}
     />
     
     </div>

@@ -1,9 +1,9 @@
 "use client"
 import { useState,useEffect } from "react"
-import { BeatLoader } from "react-spinners";
+import { ClipLoader } from "react-spinners";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-export default function TabActions({tabs,itemInfo}){
+export default function TabActions({tabs,userInfo}){
   //tab[0] is default tab for all
   const [activeTab,setActiveTab] = useState(tabs[0].content);
   const [tabData,setTabData] = useState(null);
@@ -74,23 +74,23 @@ const mocPostData =[
 const content =()=>{
      switch (activeTab) {
       case "All posts" :
-      return <AllPosts data={mocPostData} />
+      return <AllPosts data={userInfo} token={token} />
     
       case "Pending posts":
-       return <PendingPosts data={tabData} />
+       return <PendingPosts data={tabData} token={token}  />
       
       case "Suspended":
-      return <Suspended data={tabData} />
+      return <Suspended data={tabData} token={token}  />
       
       case "Actions":
-      return <Action data ={ tabData} />
+      return <Action data ={ userInfo} token={token}  />
     
      }
 }
 
 
 return(<>
-   <div className="flex flex-col  flex-1  bg-white p-3 rounded-md">
+   <div className="flex flex-col min-h-full  flex-1   p-3 rounded-md">
         <div className="flex gap-3 text-gray-700">
           {
             tabs.map((item,i)=> <div key={i} onClick={()=> setActiveTab(item.content)    } className="cursor-pointer hover:bg-gray-300 px-3 py-1 text-sm">{item.content} </div>
@@ -98,7 +98,7 @@ return(<>
           }
             
         </div>
-        <div className="w-full flex-1 h-full  ">
+        <div className="w-full   flex-1 flex h-full   ">
            {
             loading &&<div className="w-full h-full flex justify-center items-center text-red-500 font-bold "> <BeatLoader  color="gray" size="10px"/>  </div>
            }
@@ -106,7 +106,7 @@ return(<>
             err && <div className="w-full h-full flex justify-center items-center text-red-500 font-bold ">Something went wrong ! Need to set up proper api </div>
            }
            
-            <div className="p-3"> {content()}</div> :
+            <div className="w-full min-h-full"> {content()}</div> 
            
         </div>
 
@@ -115,9 +115,96 @@ return(<>
 
 }
 
+const DeletePost =(postId,token)=>{
 
-const AllPosts =({data})=>{
+  const [loading,setLoading] =useState(false);
+  const[loading2,setLoading2] = useState(false)
+  const [err,setErr] =useState('');
+   const deletePost = async (postId)=>{
+try{
+  setErr('');
+  setLoading(true)
+   const res =await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}`,{
+    method:"DELETE",
+    headers:{Authorization:`Bearer ${token}`}
+   });
+  
+   if (!res.ok){
+    if(res.status=="404") throw new Error("Data not Found")
+      else if( res.status=="400") throw new Error("Bad request")
+       else if(res.status=="401") throw new Error("Unauthorized request")
+        else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
+         else{
+        throw new Error("Failed to fecth data")
+      }
+}
+ 
+}catch(err){
+ setErr(err.message)
+ }
+ finally{
+  setLoading(false)
+ }
+   }
+   return(<>
+   <div onClick={()=>deletePost(postId)} className=" text-sm px-3 rounded-md bg-red-400 text-white">
+                  {
+                  loading? <ClipLoader size={10} />:(err? err:"Delete")
+                  }
+                  </div>
+   </>
+   )
+   
+}
+const SuspendPost = (postId,token)=>{
 
+  const [loading,setLoading] =useState(false);
+  const[loading2,setLoading2] = useState(false)
+  const [err,setErr] =useState('');
+   const SuspendPost = async ()=>{
+try{
+  setErr('');
+  setLoading(true)
+   const res =await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/suspension/post/${postId}`,{
+    method:"PATCH",
+    headers:{Authorization:`Bearer ${token}`}
+   });
+  
+   if (!res.ok){
+    if(res.status=="404") throw new Error("Data not Found")
+      else if( res.status=="400") throw new Error("Bad request")
+       else if(res.status=="401") throw new Error("Unauthorized request")
+        else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
+         else{
+        throw new Error("Failed to fecth data")
+      }
+}
+ 
+}catch(err){
+ setErr(err.message)
+ }
+ finally{
+  setLoading(false)
+ }
+}
+  
+
+
+   return(<>
+   
+   <div onClick={()=>SuspendPost(postId)} className=" text-sm px-3 rounded-md bg-white shadow text-gray-600">
+                  {
+                  loading? <ClipLoader size={10} />:(err? err:"Suspend")
+                  }
+                  </div>
+   </>
+   )
+   
+}
+
+
+const AllPosts =({data,token})=>{
+ 
   //fetch all post of a user
   return(<>
     <div>
@@ -129,43 +216,38 @@ const AllPosts =({data})=>{
               <th className="border-b p-3 text-left">Published</th>
               <th className="border-b p-3 text-left">Likes</th>
               <th className="border-b p-3 text-left">Comments</th>
-              <th className="border-b p-3 text-left">Updated </th>
               <th className="border-b p-3 text-left">Status </th>
 
               <th className="border-b p-3 text-center">Actions </th>
             </tr>
           </thead>
           <tbody className="w-full ">
-            {data?.map((post,i) => (
+            {data.posts.map((post,i) => (
               <tr key={i} className="hover:bg-gray-50">
                 <td className="border-b p-3">{post?._id || "N/A"}</td>
                 <td className="border-b p-3">{post?.title || "N/A"}</td>
 
                 <td className="border-b p-3">
-                  {new Date(post.published).toLocaleDateString("en-US", {
+                  {new Date(post.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
                   })}
                 </td>
-                <td className="border-b p-3">{post?.likes || "N/A"}</td>
-                <td className="border-b p-3">{post?.comments || "N/A"}</td>
-                <td className="border-b p-3">{ 
-                    new Date(post.updated).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  }) 
-                  }</td>
+                <td className="border-b p-3">{post?.likes.length || 0 }</td>
+                <td className="border-b p-3">{post?.comments.length || 0}</td>
+                
                <td className="border-b p-3">{post?.status || "N/A"}</td>
 
 
                 <td className="border-b">
                   <div className="flex gap-2 items-center w-full">
-                  <div className=" text-sm px-3 rounded-md bg-red-400 text-white">Delete</div>
-                  <div className=" text-sm px-3 rounded-md text-red-black">Suspend</div>
+                 <DeletePost postId={post?._id} token={token} />
+                 <SuspendPost postId={post?._id} token={token} />
+
+
                   <Link
-                    href={`/dashboard/posts/${post?.id}`}
+                    href={`/dashboard/posts/${post?._id}`}
                     className="text-sm cursor-pointer text-[#00B087] bg-[#16C098]/50 px-3 rounded text-center border border-[#16C098]"
                   >
                     View post
@@ -206,12 +288,48 @@ const Suspended =({data})=>{
 
 }
 const Action =({data})=>{
+ const [loading,setLoading] =useState(true);
+ const [err,setErr] = useState(null);
+ const [reason,setReason] = useState("");
+
+ const inputHandler =(e)=>{
+      setReason(e.target.value);
+  }
+  const Suspend =async (id)=>{
+    if(reason==="") {
+      setErr("You must write a reason")
+      return null;
+    }
+
+    try{
+      setErr(null);
+      setLoading(true);
+      const res = fecth(`${process.env.NEXT_PUBLIC_API_URL}/admin/suspend/user/${id}`,{
+                           headers: { Authorization: `Bearer ${token}` },
+                       })
+      if (!res.ok){
+      if(res.status=="404") throw new Error("Data not Found")
+        else if( res.status=="400") throw new Error("Bad request")
+         else if(res.status=="401") throw new Error("Unauthorized request")
+          else if(res.status=="500") throw new Error("Internal server error , failed to fetch data.")
+           else{
+          throw new Error("Failed to fecth data")
+        }
+  }                 
+    }catch(err){
+      setErr(err.massage)
+    }
+
+  }
+
   return(<>
-    <div className="w-full h-full flex flex-col justify-center items-center ">
-   <div className="border p-3 ">
-   <span className="text-sm font-bold">Suspend user account</span> 
-     <input type="text" className="border-gray-500 p-" placeholder="Describe the reason" />
+    <div className="w-full h-full   ">
+   <div className=" p-3 h-full w-full flex  gap-3 flex-col ">
+   <span className="text-sm font-bold">Suspend user account :</span> 
+     <input onChange={inputHandler} value={reason} type="text" className="border-gray-300 w-[200px] p-2 border" placeholder="Describe the reason" />
+    <div className="text-sm text-red-400">{err&& err}</div>
     
+     <button onClick={()=> Suspend(data._id)} className="bg-red-400 text-white rounded-md p-2 w-[100px]">Suspend</button>
     </div>
     </div>
     
